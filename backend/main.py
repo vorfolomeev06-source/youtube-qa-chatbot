@@ -4,6 +4,7 @@ from backend.youtube_service import get_video_info
 from fastapi import FastAPI
 from youtube_transcript_api import YouTubeTranscriptApi
 import logging
+from backend.rag_service import answer_question
 import os
 import json
 from backend.video_pipeline import process_video
@@ -42,6 +43,10 @@ def health():
 
 class VideoRequest(BaseModel):
     url: str
+
+class ChatRequest(BaseModel):
+    question: str
+    video_id: str
 
 
 @app.post('/video/info')
@@ -119,3 +124,7 @@ def test_supadata():
 @app.post('/video/process')
 def video_process(request: VideoRequest):
     return process_video(request.url)
+
+@app.post('/chat/ask')
+def chat_ask(request: ChatRequest):
+    return answer_question(request.question, request.video_id)
