@@ -12,4 +12,4 @@ dependencies = [
 ]
 "youtube-transcript-api",
 [tool.vercel]
-entrypoint = "backend.main:app"
+entrypoint = "main:app"
