@@ -10,6 +10,6 @@ dependencies = [
     "pinecone",
     "python-dotenv",
 ]
-
+"youtube-transcript-api",
 [tool.vercel]
 entrypoint = "backend.main:app"

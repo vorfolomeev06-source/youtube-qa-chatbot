@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 from backend.youtube_service import get_video_info
 from fastapi import FastAPI
+from youtube_transcript_api import YouTubeTranscriptApi
 
 
 from backend.config import (
@@ -54,3 +55,21 @@ def video_info(request: VideoRequest):
             status_code=502,
             detail='Could not retrieve video information from YouTube',
         )
+
+
+@app.get('/test-transcript')
+def test_transcript():
+    api = YouTubeTranscriptApi()
+    transcript = api.fetch('aircAruvnKk')
+
+    return {
+        'status': 'ok',
+        'segments': [
+            {
+                'text': segment.text,
+                'start': segment.start,
+                'duration': segment.duration
+            }
+            for segment in list(transcript)[:3]
+        ]
+    }
