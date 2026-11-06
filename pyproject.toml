@@ -1,3 +1,15 @@
+[project]
+name = "youtube-qa-chatbot"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "yt-dlp",
+    "openai",
+    "pinecone",
+    "python-dotenv",
+]
 
 [tool.vercel]
 entrypoint = "backend.main:app"
