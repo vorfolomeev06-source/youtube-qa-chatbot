@@ -9,7 +9,8 @@ dependencies = [
     "openai",
     "pinecone",
     "python-dotenv",
+    "youtube-transcript-api",
 ]
-"youtube-transcript-api",
+
 [tool.vercel]
 entrypoint = "main:app"
