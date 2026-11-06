@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from backend.youtube_service import get_video_info
 from fastapi import FastAPI
 from youtube_transcript_api import YouTubeTranscriptApi
-
+import logging
 
 from backend.config import (
     OPENAI_API_KEY,
@@ -59,17 +59,27 @@ def video_info(request: VideoRequest):
 
 @app.get('/test-transcript')
 def test_transcript():
-    api = YouTubeTranscriptApi()
-    transcript = api.fetch('aircAruvnKk')
+    try:
+        api = YouTubeTranscriptApi()
+        transcript = api.fetch('aircAruvnKk')
 
-    return {
-        'status': 'ok',
-        'segments': [
-            {
-                'text': segment.text,
-                'start': segment.start,
-                'duration': segment.duration
-            }
-            for segment in list(transcript)[:3]
-        ]
-    }
+        return {
+            'status': 'ok',
+            'segments': [
+                {
+                    'text': segment.text,
+                    'start': segment.start,
+                    'duration': segment.duration
+                }
+                for segment in list(transcript)[:3]
+            ]
+        }
+
+    except Exception:
+        logging.exception('YouTube transcript test failed')
+
+        raise HTTPException(
+            status_code=502,
+            detail='Transcript retrieval failed'
+        )
+    
