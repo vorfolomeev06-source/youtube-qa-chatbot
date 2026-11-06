@@ -6,6 +6,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import logging
 import os
 import json
+from backend.video_pipeline import process_video
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode
 from urllib.error import HTTPError
@@ -114,3 +115,7 @@ def test_supadata():
             status_code=502,
             detail=f'Supadata returned HTTP {error.code}'
         )
+
+@app.post('/video/process')
+def video_process(request: VideoRequest):
+    return process_video(request.url)
