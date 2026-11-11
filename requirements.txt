@@ -4,3 +4,6 @@ yt-dlp
 openai
 pinecone
 python-dotenv
+langchain
+langchain-openai
+langchain-core
