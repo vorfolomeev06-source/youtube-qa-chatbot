@@ -133,6 +133,11 @@ def get_video_chunks(video_id: str):
         for vector_id in batch
     ]
 
+    ids = [
+        item.id if hasattr(item, 'id') else item
+        for item in ids
+    ]
+
     if not ids:
         return []
 
