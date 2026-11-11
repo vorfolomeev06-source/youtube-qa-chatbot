@@ -26,8 +26,19 @@ def answer_question(question: str, video_id: str):
     input=f'Video transcript context:\n{context}\n\nUser question:\n{question}'
 )
     answer = response.output_text
+    sources = []
+
+    for chunk in chunks:
+        timestamp = int(chunk['start'])
+
+        sources.append({
+            'text': chunk['text'],
+            'start': chunk['start'],
+            'end': chunk['end'],
+            'url': f'https://www.youtube.com/watch?v={video_id}&t={timestamp}s'
+        })
     return {
         'answer': answer,
         'video_id': video_id,
-        'sources': chunks
+        'sources': sources
     }

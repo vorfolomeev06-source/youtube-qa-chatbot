@@ -1,4 +1,3 @@
-
 from dotenv import load_dotenv
 from openai import OpenAI
 from pinecone import Pinecone, ServerlessSpec
@@ -124,3 +123,38 @@ def save_chunks(chunks: list, video_id: str):
         vectors=vectors,
         namespace=video_id,
     )
+
+def get_video_chunks(video_id: str):
+    index = get_index()
+
+    ids = [
+        vector_id
+        for batch in index.list(namespace=video_id)
+        for vector_id in batch
+    ]
+
+    if not ids:
+        return []
+
+    chunks = []
+
+    for i in range(0, len(ids), 100):
+        batch_ids = ids[i:i + 100]
+
+        response = index.fetch(
+            ids=batch_ids,
+            namespace=video_id
+        )
+
+        for vector in response.vectors.values():
+            chunks.append({
+                'text': vector.metadata['text'],
+                'start': vector.metadata['start'],
+                'end': vector.metadata['end']
+            })
+
+    chunks.sort(key=lambda chunk: chunk['start'])
+
+    return chunks
+
+

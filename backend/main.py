@@ -1,12 +1,15 @@
 from fastapi import HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Literal
 from backend.youtube_service import get_video_info
 from fastapi import FastAPI
 from youtube_transcript_api import YouTubeTranscriptApi
 import logging
+from backend.agent_service import ask_agent
 from backend.rag_service import answer_question
 import os
 import json
+from backend.quiz_service import generate_quiz
 from backend.video_pipeline import process_video
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode
@@ -47,6 +50,8 @@ class VideoRequest(BaseModel):
 class ChatRequest(BaseModel):
     question: str
     video_id: str
+    history: list[dict[str, str]] = Field(default_factory=list)
+
 
 
 @app.post('/video/info')
@@ -127,4 +132,29 @@ def video_process(request: VideoRequest):
 
 @app.post('/chat/ask')
 def chat_ask(request: ChatRequest):
-    return answer_question(request.question, request.video_id)
+    try:
+        return ask_agent(
+            question=request.question,
+            video_id=request.video_id,
+            history=request.history
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+class QuizRequest(BaseModel):
+    video_id: str
+    difficulty: Literal['easy', 'medium', 'hard'] = 'medium'
+    num_questions: int = Field(default=5, ge=1, le=10)
+
+
+@app.post('/quiz/generate')
+def generate_video_quiz(request: QuizRequest):
+    try:
+        return generate_quiz(
+            video_id=request.video_id,
+            difficulty=request.difficulty,
+            num_questions=request.num_questions
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
