@@ -2,6 +2,7 @@
 name = "youtube-qa-chatbot"
 version = "0.1.0"
 requires-python = ">=3.12,<3.13"
+
 dependencies = [
     "fastapi",
     "uvicorn",
@@ -10,7 +11,11 @@ dependencies = [
     "pinecone",
     "python-dotenv",
     "youtube-transcript-api",
+    "langchain",
+    "langchain-openai",
+    "langchain-core",
 ]
+
 
 [tool.vercel]
 entrypoint = "main:app"
